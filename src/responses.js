@@ -1,9 +1,11 @@
 const fs = require('fs');
 const data = require('./data');
 
-//const index = fs.readFileSync(`${__dirname}/../client/client.html`);
-const build = fs.readFileSync(`${__dirname}/../client/build/index.html`);
-//const style = fs.readFileSync(`${__dirname}/../client/style.css`);
+// const build = fs.readFileSync(`${__dirname}/../client/build`);
+const build = fs.readdirSync(`${__dirname}/../client/build`);
+const index = fs.readFileSync(`${__dirname}/../client/build/index.html`);
+
+// const style = fs.readFileSync(`${__dirname}/../client/style.css`);
 
 const people = data.people;
 
@@ -34,9 +36,9 @@ const getBuild = (req, res) => {
   respond(req, res, 200, 'text/html', build);
 };
 
-// const getIndex = (req, res) => {
-//   respond(req, res, 200, 'text/html', index);
-// };
+const getIndex = (req, res) => {
+  respond(req, res, 200, 'text/html', index);
+};
 
 // const getCSS = (req, res) => {
 //   respond(req, res, 200, 'text/css', style);
@@ -119,8 +121,8 @@ const addPerson = (req, res, body) => {
 
 module.exports = {
   getBuild,
-  //getIndex,
-  //getCSS,
+  getIndex,
+  // getCSS,
   notFound,
   notFoundMeta,
   getPeople,

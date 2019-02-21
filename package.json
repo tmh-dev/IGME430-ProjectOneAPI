@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/server.js",
-    "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
+    "heroku-postbuild": "cd client && npm install && npm run build",
     "pretest": "eslint ./src --fix",
     "test": "echo \"Tests complete\""
   },
@@ -25,5 +25,8 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-dev": "^2.0.0",
     "eslint-plugin-import": "^2.16.0"
+  },
+  "dependencies": {
+    "serve-handler": "^5.0.8"
   }
 }

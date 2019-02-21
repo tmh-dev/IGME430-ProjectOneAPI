@@ -26,6 +26,7 @@ class App extends Component {
 
     //function to parse our response
     parseJSON = (xhr) => {
+        console.dir(xhr.response)
         //parse response (obj will be empty in a 204 updated)
         const obj = JSON.parse(xhr.response);
         console.dir(obj);
@@ -41,12 +42,12 @@ class App extends Component {
         if (obj.people) {
             let peopleData = obj.people.persons;
 
-            if (this.state.searchTerm) {
-              peopleData = peopleData.filter(person => {
-                return Object.keys(person).some(key => key.toString().contains(this.state.searchTerm))
-              })
-              //console.log(peopleData)
-            }
+            // if (this.state.searchTerm) {
+            //   peopleData = peopleData.filter(person => {
+            //     return Object.keys(person).some(key => key.toString().contains(this.state.searchTerm))
+            //   })
+            //   //console.log(peopleData)
+            // }
 
             this.setState({
                 dataList: peopleData

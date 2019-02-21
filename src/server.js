@@ -1,9 +1,12 @@
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
+const handler = require('serve-handler');
+const path = require('path');
 const responseHandler = require('./responses.js');
+const fs = require('fs')
 
-const PORT = process.env.PORT || process.env.NODE_PORT || 5000;
+const PORT = process.env.PORT || process.env.NODE_PORT || 5001;
 
 const handlePost = (req, res, parsedUrl) => {
   if (parsedUrl.pathname === '/addPerson') {
@@ -33,21 +36,45 @@ const handleHead = (req, res, parsedUrl) => {
 };
 
 const handleGet = (req, res, parsedUrl) => {
-  responseHandler.getBuild(req, res);
-  if (parsedUrl.pathname === '/style.css') responseHandler.getCSS(req, res);
+  if (parsedUrl.pathname === '/') responseHandler.getIndex(req, res);
+  else if (parsedUrl.pathname === '/style.css') responseHandler.getCSS(req, res);
   else if (parsedUrl.pathname === '/getPeople') responseHandler.getPeople(req, res);
   else responseHandler.notFound(req, res);
-
 };
+
 
 
 const onRequest = (req, res) => {
   const parsedUrl = url.parse(req.url);
-
-  if (req.method === 'POST') handlePost(req, res, parsedUrl);
+  // serve static files
+  if (parsedUrl.pathname.includes('/client/build')|| parsedUrl.pathname.includes('/static')) staticServe(req, res);
+  else if (req.method === 'POST') handlePost(req, res, parsedUrl);
   else if (req.method === 'HEAD') handleHead(req, res, parsedUrl);
   else if (req.method === 'GET') handleGet(req, res, parsedUrl);
+  
+}
+
+const staticBasePath = './client/build/';
+
+const staticServe = function (req, res) {
+  const resolvedBase = path.resolve(staticBasePath);
+  const safeSuffix = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
+  const fileLoc = path.join(resolvedBase, safeSuffix);
+
+  fs.readFile(fileLoc, (err, data) => {
+    if (err) {
+      res.writeHead(404, 'Not Found');
+      res.write('404: File Not Found!');
+      return res.end();
+    }
+
+    res.statusCode = 200;
+
+    res.write(data);
+    return res.end();
+  });
 };
+
 
 const app = http.createServer(onRequest);
 
