@@ -9,20 +9,13 @@ class SearchBar extends Component {
         this.setState({
             searchTerm: e.target.value
         });
-    }
-
-    handleFormSubmit(e) {
-        e.preventDefault();
-
-        this.props.onFormSubmit(this.state.searchTerm);
+        this.props.onSearchChange(this.state.searchTerm.trim().toLowerCase());
     }
 
     render() {
         return (
-            <div className="ui segment">
-                <form onSubmit={this.handleFormSubmit.bind(this)} className="ui form">
+                <form onSubmit={e => e.preventDefault()} className="ui form">
                     <div className="field">
-                        <label>Search: </label>
                         <div className="ui search">
                             <div className="ui icon input">
                                 <input type="text" placeholder="Search for shit" value={this.state.searchTerm} onChange={this.handleOnChange}></input>
@@ -31,7 +24,6 @@ class SearchBar extends Component {
                         </div> 
                     </div>  
                 </form>
-            </div>
         );
     }
 }

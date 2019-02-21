@@ -1,114 +1,129 @@
 const fs = require('fs');
+const data = require('./data');
 
-const index = fs.readFileSync(`${__dirname}/../client/client.html`);
-const style = fs.readFileSync(`${__dirname}/../client/style.css`);
+//const index = fs.readFileSync(`${__dirname}/../client/client.html`);
+const build = fs.readFileSync(`${__dirname}/../client/build/index.html`);
+//const style = fs.readFileSync(`${__dirname}/../client/style.css`);
 
-const users = {};
-const people = {
-  "persons": [
-    {"name": "Friedrich Nietzsche", "description":"this is a test summary", "imageUrl":"https://upload.wikimedia.org/wikipedia/commons/1/1b/Nietzsche187a.jpg"},
-    {"name": "Albert Camus", "description":"this is a test summary part 2", "imageUrl":"https://upload.wikimedia.org/wikipedia/commons/0/08/Albert_Camus%2C_gagnant_de_prix_Nobel%2C_portrait_en_buste%2C_pos%C3%A9_au_bureau%2C_faisant_face_%C3%A0_gauche%2C_cigarette_de_tabagisme.jpg"}
-  ]
-};
+const people = data.people;
 
-const respond = (request, response, status, type, object) => {
+/*-----------------------------------------------------------------------------------*/
+
+
+const respond = (req, res, status, type, object) => {
   const headers = {
     'Content-Type': type,
   };
 
-  response.writeHead(status, headers);
-  response.write(object);
+  res.writeHead(status, headers);
+  res.write(object);
   console.dir(status);
-  response.end();
+  res.end();
 };
 
-const respondMeta = (request, response, status, type) => {
-  response.writeHead(status, { 'Content-Type': type });
-  response.end();
+const respondMeta = (req, res, status, type) => {
+  res.writeHead(status, { 'Content-Type': type });
+  res.end();
 };
 
-const getIndex = (request, response) => {
-  respond(request, response, 200, 'text/html', index);
+
+/*-----------------------------------------------------------------------------------*/
+
+// Serve static files
+const getBuild = (req, res) => {
+  respond(req, res, 200, 'text/html', build);
 };
 
-const getCSS = (request, response) => {
-  respond(request, response, 200, 'text/css', style);
-};
+// const getIndex = (req, res) => {
+//   respond(req, res, 200, 'text/html', index);
+// };
 
-// function for 404 not found requests with message
-const notReal = (request, response) => {
+// const getCSS = (req, res) => {
+//   respond(req, res, 200, 'text/css', style);
+// };
+
+
+/*-----------------------------------------------------------------------------------*/
+
+
+// Function for 404 not found requests with message
+const notFound = (req, res) => {
   // create error message for response
-  const responseJSON = {
+  const resJSON = {
     id: 'notFound',
   };
 
-  if (request.method === 'GET') responseJSON.message = 'The page you are looking for was not found.';
+  if (req.method === 'GET') resJSON.message = 'The page you are looking for was not found.';
 
   // return a 404 with an error message
-  respond(request, response, 404, 'application/json', JSON.stringify(responseJSON));
+  respond(req, res, 404, 'application/json', JSON.stringify(resJSON));
 };
 
-const notRealMeta = (request, response) => {
-  respondMeta(request, response, 404, 'application/json');
-};
+const notFoundMeta = (req, res) => respondMeta(req, res, 404, 'application/json');
 
-const getUsers = (request, response) => {
-  const responseJSON = {
-    message: 'Success',
-    users,
-  };
 
-  respond(request, response, 200, 'application/json', JSON.stringify(responseJSON));
-};
+/*-----------------------------------------------------------------------------------*/
 
-const getUsersMeta = (request, response) => respondMeta(request, response, 200, 'application/json');
 
 const getPeople = (req, res) => {
-  const responseJSON = {
+  const resJSON = {
     message: 'Success',
     people,
   };
 
-  respond(req, res, 200, 'application/json', JSON.stringify(responseJSON));
+  respond(req, res, 200, 'application/json', JSON.stringify(resJSON));
 };
 
-const addUser = (request, response, body) => {
-  const responseJSON = {
-    message: 'Name and age are both required.',
+const getPeopleMeta = (req, res) => respondMeta(req, res, 200, 'application/json');
+
+
+/*-----------------------------------------------------------------------------------*/
+
+
+const addPerson = (req, res, body) => {
+  const resJSON = {
+    message: 'Please fill in all required fields.',
   };
 
-  if (!body.name || !body.age) {
-    responseJSON.id = 'missingParams';
-    return respond(request, response, 400, 'application/json', JSON.stringify(responseJSON));
+
+  if (!body.name && !body.quote && !body.description && !body.imageUrl) {
+    resJSON.id = 'missingParams';
+    return respond(req, res, 400, 'application/json', JSON.stringify(resJSON));
   }
 
-  let responseCode = 201;
-
-  if (users[body.name]) {
-    responseCode = 204;
+  let statusCode = 201;
+  // fix later
+  if (!people.persons.filter(person => (person.name === body.name))) {
+    statusCode = 204;
+    console.dir('hit');
   } else {
-    users[body.name] = {};
+    const newPerson = {
+      name: body.name.toString(),
+      quote: body.quote.toString(),
+      description: body.description.toString(),
+      imageUrl: body.imageUrl.toString(),
+    };
+
+    people.persons.push(newPerson);
+  }
+  console.dir(body.imageUrl);
+
+  if (statusCode === 201) {
+    resJSON.message = 'Created Successfully';
+    return respond(req, res, statusCode, 'application/json', JSON.stringify(resJSON));
   }
 
-  users[body.name].name = body.name;
-  users[body.name].age = body.age;
-
-  if (responseCode === 201) {
-    responseJSON.message = 'Created Successfully';
-    return respond(request, response, responseCode, 'application/json', JSON.stringify(responseJSON));
-  }
-
-  return respondMeta(request, response, responseCode, 'application/json');
+  return respondMeta(req, res, statusCode, 'application/json');
 };
 
 
 module.exports = {
-  getIndex,
-  getCSS,
-  notReal,
-  getUsers,
+  getBuild,
+  //getIndex,
+  //getCSS,
+  notFound,
+  notFoundMeta,
   getPeople,
-  addUser,
-  getUsersMeta,
-  notRealMeta,
+  getPeopleMeta,
+  addPerson,
 };
