@@ -3,7 +3,7 @@ const url = require('url');
 const query = require('querystring');
 const responseHandler = require('./responses.js');
 
-const PORT = process.env.PORT || process.env.NODE_PORT || 3000;
+const PORT = process.env.PORT || process.env.NODE_PORT || 5000;
 
 const handlePost = (req, res, parsedUrl) => {
   if (parsedUrl.pathname === '/addPerson') {
@@ -33,10 +33,11 @@ const handleHead = (req, res, parsedUrl) => {
 };
 
 const handleGet = (req, res, parsedUrl) => {
-  if (parsedUrl.pathname === '/') responseHandler.getBuild(req, res);
-  else if (parsedUrl.pathname === '/style.css') responseHandler.getCSS(req, res);
+  
+  if (parsedUrl.pathname === '/style.css') responseHandler.getCSS(req, res);
   else if (parsedUrl.pathname === '/getPeople') responseHandler.getPeople(req, res);
   else responseHandler.notFound(req, res);
+  responseHandler.getBuild(req, res);
 };
 
 
