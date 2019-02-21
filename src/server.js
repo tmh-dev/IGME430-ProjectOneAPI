@@ -33,11 +33,11 @@ const handleHead = (req, res, parsedUrl) => {
 };
 
 const handleGet = (req, res, parsedUrl) => {
-  
+  responseHandler.getBuild(req, res);
   if (parsedUrl.pathname === '/style.css') responseHandler.getCSS(req, res);
   else if (parsedUrl.pathname === '/getPeople') responseHandler.getPeople(req, res);
   else responseHandler.notFound(req, res);
-  responseHandler.getBuild(req, res);
+
 };
 
 
