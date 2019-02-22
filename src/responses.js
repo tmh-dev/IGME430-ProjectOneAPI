@@ -1,11 +1,8 @@
 const fs = require('fs');
 const data = require('./data');
 
-// const build = fs.readFileSync(`${__dirname}/../client/build`);
 const build = fs.readdirSync(`${__dirname}/../client/build`);
 const index = fs.readFileSync(`${__dirname}/../client/build/index.html`);
-
-// const style = fs.readFileSync(`${__dirname}/../client/style.css`);
 
 const people = data.people;
 

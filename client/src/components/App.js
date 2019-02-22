@@ -21,7 +21,7 @@ class App extends Component {
 
     //after the app first renders
     componentDidMount() {
-      //this.requestUpdate('get', '/getPeople');
+      this.requestUpdate('get', '/getPeople');
     }
 
     //function to parse our response
@@ -125,6 +125,7 @@ class App extends Component {
       this.setState({
         searchTerm: searchTerm
       });
+      this.requestUpdate('get', '/getPeople');
       this.requestUpdate('get', '/getPeople');
       console.log('hit')
     }

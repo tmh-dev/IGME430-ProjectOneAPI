@@ -3,10 +3,10 @@ import PostField from './PostField';
 
 class PostForm extends Component {
     state = {
-        name: '',
-        quote: '',
-        description: '',
-        image: ''
+        name: "Form doesn't submit on first click",
+        quote: "Form doesn't submit on first click",
+        description: "Form doesn't submit on first click",
+        image: "Form doesn't submit on first click"
     };
 
     handleOnChange = (e) => {

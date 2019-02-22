@@ -6,7 +6,7 @@ const path = require('path');
 const responseHandler = require('./responses.js');
 const fs = require('fs')
 
-const PORT = process.env.PORT || process.env.NODE_PORT || 5001;
+const PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const handlePost = (req, res, parsedUrl) => {
   if (parsedUrl.pathname === '/addPerson') {
