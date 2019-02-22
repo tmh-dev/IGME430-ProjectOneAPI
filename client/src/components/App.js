@@ -39,8 +39,8 @@ class App extends Component {
         }
         
         //if people in response, add to screen
-        if (obj.people) {
-            let peopleData = obj.people.persons;
+        if (obj.peopleData) {
+            let peopleData = obj.peopleData.persons;
 
             // if (this.state.searchTerm) {
             //   peopleData = peopleData.filter(person => {

@@ -1,10 +1,11 @@
 const fs = require('fs');
 const data = require('./data');
 
+
 const build = fs.readdirSync(`${__dirname}/../client/build`);
 const index = fs.readFileSync(`${__dirname}/../client/build/index.html`);
 
-const people = data.people;
+const peopleData = data.people;
 
 /*-----------------------------------------------------------------------------------*/
 
@@ -67,7 +68,7 @@ const notFoundMeta = (req, res) => respondMeta(req, res, 404, 'application/json'
 const getPeople = (req, res) => {
   const resJSON = {
     message: 'Success',
-    people,
+    peopleData,
   };
 
   respond(req, res, 200, 'application/json', JSON.stringify(resJSON));
@@ -92,7 +93,7 @@ const addPerson = (req, res, body) => {
 
   let statusCode = 201;
   // fix later
-  if (!people.persons.filter(person => (person.name === body.name))) {
+  if (!peopleData.persons.filter(person => (person.name === body.name))) {
     statusCode = 204;
     console.dir('hit');
   } else {
@@ -103,7 +104,7 @@ const addPerson = (req, res, body) => {
       imageUrl: body.imageUrl.toString(),
     };
 
-    people.persons.push(newPerson);
+    peopleData.persons.push(newPerson);
   }
   console.dir(body.imageUrl);
 

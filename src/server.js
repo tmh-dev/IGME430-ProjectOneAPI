@@ -1,10 +1,9 @@
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
-const handler = require('serve-handler');
 const path = require('path');
+const fs = require('fs');
 const responseHandler = require('./responses.js');
-const fs = require('fs')
 
 const PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -42,18 +41,6 @@ const handleGet = (req, res, parsedUrl) => {
   else responseHandler.notFound(req, res);
 };
 
-
-
-const onRequest = (req, res) => {
-  const parsedUrl = url.parse(req.url);
-  // serve static files
-  if (parsedUrl.pathname.includes('/client/build')|| parsedUrl.pathname.includes('/static')) staticServe(req, res);
-  else if (req.method === 'POST') handlePost(req, res, parsedUrl);
-  else if (req.method === 'HEAD') handleHead(req, res, parsedUrl);
-  else if (req.method === 'GET') handleGet(req, res, parsedUrl);
-  
-}
-
 const staticBasePath = './client/build/';
 
 const staticServe = function (req, res) {
@@ -75,6 +62,14 @@ const staticServe = function (req, res) {
   });
 };
 
+const onRequest = (req, res) => {
+  const parsedUrl = url.parse(req.url);
+  // serve static files
+  if (parsedUrl.pathname.includes('/client/build') || parsedUrl.pathname.includes('/static')) staticServe(req, res);
+  else if (req.method === 'POST') handlePost(req, res, parsedUrl);
+  else if (req.method === 'HEAD') handleHead(req, res, parsedUrl);
+  else if (req.method === 'GET') handleGet(req, res, parsedUrl);
+};
 
 const app = http.createServer(onRequest);
 
