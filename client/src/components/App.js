@@ -21,15 +21,14 @@ class App extends Component {
 
     //after the app first renders
     componentDidMount() {
+      //initially populate page with people
       this.requestUpdate('get', '/getPeople');
     }
 
     //function to parse our response
     parseJSON = (xhr) => {
-        console.dir(xhr.response)
         //parse response (obj will be empty in a 204 updated)
         const obj = JSON.parse(xhr.response);
-        console.dir(obj);
         
         //if message in response, add to screen
         if(obj.message) {
@@ -38,19 +37,10 @@ class App extends Component {
           });
         }
         
-        //if people in response, add to screen
-        if (obj.peopleData) {
-            let peopleData = obj.peopleData.persons;
-
-            // if (this.state.searchTerm) {
-            //   peopleData = peopleData.filter(person => {
-            //     return Object.keys(person).some(key => key.toString().contains(this.state.searchTerm))
-            //   })
-            //   //console.log(peopleData)
-            // }
-
+        //if people in response, update react state and update components
+        if (obj.people) {
             this.setState({
-                dataList: peopleData
+                dataList: obj.people.people
             });
         }
     }
@@ -89,56 +79,63 @@ class App extends Component {
             console.log('Received');
     }
 
-    //function to send our post request
+    //function to send our post and get requests
     requestUpdate = (method, url) => {
         //create a new Ajax request (remember this is asynchronous)
         const xhr = new XMLHttpRequest();
-        //set the method (POST) and url (action field from form)
-        xhr.open(method, url);
-  
+        //set the method and url (action field from form)
+        if (method === 'get') {
+          const params = `query=${this.state.searchTerm}&sort=true`;
+          xhr.open(method, `${url}?${params}`, true);
+        } else {
+          xhr.open(method, url);
+        }
+
         xhr.setRequestHeader ('Accept', 'application/json');
-        
+
         //set our function to handle the response
         if (method === 'post') {
           xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
           xhr.onload = () => this.handleResponse(xhr, false);
         }
-        else if (method === 'get')
+        else if (method === 'get') {
+          //xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
           xhr.onload = () => this.handleResponse(xhr, true);
+        }
         else 
           xhr.onload = () => this.handleResponse(xhr, false);
-        
+
         //send our request with the data
         if (method === 'post') {
           const formData = `name=${this.state.nameField}&quote=${this.state.quoteField}&description=${this.state.descriptionField}&imageUrl=${this.state.imageField}`;
           xhr.send(formData);
+        } else if (method === 'get') {
+          xhr.send(null);
         } else {
           xhr.send();
         }
       
-        //prevent the browser's default action (to send the form on its own)
         //return false to prevent the browser from trying to change page
         return false;
     }
 
-    handleSearchBarChange = (searchTerm) => {
-      this.setState({
-        searchTerm: searchTerm
+    handleSearchBarChange = async searchTerm => {
+      await this.setState({
+        searchTerm: searchTerm,
       });
       this.requestUpdate('get', '/getPeople');
-      this.requestUpdate('get', '/getPeople');
-      console.log('hit')
     }
 
-    handlePostFormSubmit = (name, quote, description, image) => {
-      this.setState({
+    // update form vars
+    handlePostFormSubmit = async (name, quote, description, image) => {
+      await this.setState({
         nameField: name,
         quoteField: quote,
         descriptionField: description,
-        imageField: image
+        imageField: image,
       });
-
       this.requestUpdate('post', '/addPerson');
+      this.requestUpdate('get', '/getPeople');
     }
 
     render() {
@@ -147,7 +144,7 @@ class App extends Component {
                 <div>{this.state.serverMessage}</div>
                 <div>{this.state.content}</div>
                 <div>{this.state.people}</div>
-                <div className="ui huge center aligned header">Project One</div>
+                <div className="ui huge center aligned header" style={{color: '#ac3b61'}}>Project One</div>
                 <div className="ui divider"></div>
                 <SearchBar onSearchChange={this.handleSearchBarChange}/>
                 <PostForm onFormSubmit={this.handlePostFormSubmit}/>

@@ -3,10 +3,10 @@ import PostField from './PostField';
 
 class PostForm extends Component {
     state = {
-        name: "Form doesn't submit on first click",
-        quote: "Form doesn't submit on first click",
-        description: "Form doesn't submit on first click",
-        image: "Form doesn't submit on first click"
+        name: "",
+        quote: "",
+        description: "",
+        image: ""
     };
 
     handleOnChange = (e) => {
@@ -22,7 +22,6 @@ class PostForm extends Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-
         this.props.onFormSubmit(
             this.state.name,
             this.state.quote,
@@ -34,15 +33,16 @@ class PostForm extends Component {
     render() {
         return (
             <div className="ui segment">
-                <div className="ui small center aligned header">Submit New Person</div>
+                <div className="ui small center aligned header"  style={{color: '#ac3b61'}}>Submit New Person</div>
                 <form onSubmit={this.handleFormSubmit.bind(this)} className="ui form">
                     <div className="fields">
                         <PostField dataTag="name" placeholder="Name" value={this.state.name} handleOnChange={this.handleOnChange}/>
                         <PostField dataTag="quote" placeholder="Quote" value={this.state.quote} handleOnChange={this.handleOnChange}/>
                         <PostField dataTag="description" placeholder="Description" value={this.state.description} handleOnChange={this.handleOnChange}/>
                         <PostField dataTag="image" placeholder="Image Link" value={this.state.image} handleOnChange={this.handleOnChange}/>
-                        <button type="submit" className="ui primary button">Submit</button>
+
                     </div>
+                    <button type="submit" className="ui primary button">Submit</button>
                 </form>
             </div>
         );

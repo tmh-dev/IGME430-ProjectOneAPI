@@ -14,12 +14,11 @@ class CardGrid extends Component {
 
     render() {
         return (
-            <div className="ui segment">
-                <div className="ui cards">
-                    <div className="ui grid" style={{margin:'.5em'}}>     
-                     {this.generateGrid()}
-                    </div>
-                </div>
+            <div className="ui segment">   
+                    <div className="ui grid">
+                        {this.generateGrid()}
+                    </div>            
+                 
             </div>
         );
     }
